@@ -11,13 +11,13 @@
 # Description: OpenWrt DIY script part 1 (Before Update feeds)
 
 #Modify Router Name
-sed -i 's/ImmortalWrt/Trb.Corp/g' package/base-files/files/bin/config_generate
+sed -i 's/ImmortalWrt/Nas/g' package/base-files/files/bin/config_generate
 sed -i 's#/bin/login#/bin/login -f root#g' feeds/packages/utils/ttyd/files/ttyd.config
 sed -i 's#/bin/ash#/bin/bash#g' package/base-files/files/etc/passwd
 
 #Modify Default Network Interface
-sed -i '/ucidef_set_interface_lan/s/eth0/eth1 eth2 eth3/g' package/base-files/files/etc/board.d/99-default_network
-sed -i '/ucidef_set_interface_wan/s/eth1/eth0/g' package/base-files/files/etc/board.d/99-default_network
+#sed -i '/ucidef_set_interface_lan/s/eth0/eth1 eth2 eth3/g' package/base-files/files/etc/board.d/99-default_network
+#sed -i '/ucidef_set_interface_wan/s/eth1/eth0/g' package/base-files/files/etc/board.d/99-default_network
 
 sed -i 's/hd0/hd3/g' target/linux/x86/image/grub-efi.cfg
 
