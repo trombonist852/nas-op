@@ -52,7 +52,7 @@ sed -i '/ucidef_set_interface_wan/s/eth1/eth0/g' package/base-files/files/etc/bo
 
 # 设置首次登录后台密码为空（进入openwrt后自行修改密码）
 sed -i 's#root::0:0:99999:7:::#root:$1$fe9OTETj$lEJwiQW4hDxi/GNj4JUlC1:18679:0:99999:7:::#g' package/base-files/files/etc/shadow
-
+sed -i 's/hd0/hd3/g' target/linux/x86/image/grub-efi.cfg
 svn checkout https://github.com/trombonist852/custom/trunk/luci-app-filetransfer package/custom/luci-app-filetransfer-mod
 svn export https://github.com/trombonist852/custom/trunk/sysinfo.sh package/emortal/default-settings/files/
 
