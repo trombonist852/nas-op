@@ -1,0 +1,28 @@
+
+config interface 'loopback'
+	option device 'lo'
+	option proto 'static'
+	option ipaddr '127.0.0.1'
+	option netmask '255.0.0.0'
+
+config globals 'globals'
+	option ula_prefix 'fdbf:ee61:7e56::/48'
+
+config device
+	option name 'br-lan'
+	option type 'bridge'
+	list ports 'eth0'
+	list ports 'eth1'
+	list ports 'eth2'
+	list ports 'eth3'
+	option ipv6 '0'
+
+config interface 'lan'
+	option device 'br-lan'
+	option proto 'static'
+	option ipaddr '192.168.1.2'
+	option netmask '255.255.255.0'
+	option gateway '192.168.1.4'
+	list dns '192.168.1.4'
+	option delegate '0'
+
