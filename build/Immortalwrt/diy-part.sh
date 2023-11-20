@@ -46,8 +46,8 @@ sed -i 's#/bin/ash#/bin/bash#g' package/base-files/files/etc/passwd
 # 设置首次登录后台密码为空（进入openwrt后自行修改密码）
 sed -i 's#root::0:0:99999:7:::#root:$1$fe9OTETj$lEJwiQW4hDxi/GNj4JUlC1:18679:0:99999:7:::#g' package/base-files/files/etc/shadow
 ##svn checkout https://github.com/trombonist852/custom/trunk/luci-app-filetransfer package/custom/luci-app-filetransfer-mod
-git clone https://github.com/xiaozhuai/luci-app-filebrowser.git package/custom/luci-app-filebrowser
-git clone https://github.com/sirpdboy/luci-app-advanced.git package/custom/luci-app-advanced
+git clone https://github.com/xiaozhuai/luci-app-filebrowser.git package/custom/luci-app-filebrowser-mod
+git clone https://github.com/sirpdboy/luci-app-advanced.git package/custom/luci-app-advanced-mod
 
 # 更换固件内核
 export Replace_Kernel="0"                    # 更换内核版本,在对应源码的[target/linux/架构]查看patches-x.x,看看x.x有啥就有啥内核了(填入内核x.x版本号,填0为不作修改)
