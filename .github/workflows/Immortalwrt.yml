@@ -217,7 +217,6 @@ jobs:
     - name: 释放磁盘空间
       uses: jlumbroso/free-disk-space@main
       with:
-      tool-cache: false
       android: true
       dotnet: true
       haskell: true
