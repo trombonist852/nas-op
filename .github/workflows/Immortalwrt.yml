@@ -116,19 +116,6 @@ jobs:
         sudo -E apt-get -qq update -y
         sudo -E apt-get -qq install -y gawk git gettext libssl-dev xsltproc zip git-core wget curl grep python2.7 python3 python3-pip libpython3-dev
         sudo timedatectl set-timezone "$TZ"
-        # 确保 /etc/resolv.conf 存在
-        if [ ! -e /etc/resolv.conf ]; then
-          echo "创建 /etc/resolv.conf"
-          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
-        fi
-        
-        # 创建可靠的DNS备份
-        echo "创建DNS备份..."
-        sudo cp /etc/resolv.conf /etc/resolv.conf.bak || {
-          echo "备份失败，创建新的备份文件"
-          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf.bak
-          echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf.bak
-        }        
 
     - name: Create simulated physical disk
       run: |              
@@ -138,27 +125,16 @@ jobs:
         sudo chown $USER:$GROUPS /${{ env.DIY_WORK }}
         echo "扩展空间完成:"
         df -h /${{ env.DIY_WORK }}
-        # 设置可靠DNS
-        echo "确保DNS配置存在..."
-        if [ ! -e /etc/resolv.conf ]; then
-          echo "创建新的/etc/resolv.conf"
-          sudo mkdir -p /etc
-          echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
-          echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf
-        else
-          echo "使用备份恢复DNS配置..."
-          sudo cp -f /etc/resolv.conf.bak /etc/resolv.conf
-        fi
-        
-        echo "当前DNS配置:"
-        cat /etc/resolv.conf
-        echo "网络连通性测试:"
-        ping -c 4 github.com || true  
-
     
     - name: 下载"${{ matrix.target }}-${{ inputs.REPO_BRANCH }}"源码
       working-directory: /${{ env.DIY_WORK }}
-      run: |              
+      env:
+      # 设置自定义DNS解析器（绕过系统DNS配置）
+        GIT_DNS_OVERRIDE: "1"
+        GIT_DNS_SERVERS: "8.8.8.8,1.1.1.1"      
+      run: |
+        # 完全绕过系统DNS配置
+        echo "使用自定义DNS解析器: $GIT_DNS_SERVERS"      
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
         ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
