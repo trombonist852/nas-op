@@ -133,7 +133,15 @@ jobs:
         sudo mkdir -p /${{ env.DIY_WORK }}
         sudo mount /dev/github/runner /${{ env.DIY_WORK }}
         sudo chown $USER:$GROUPS /${{ env.DIY_WORK }}        
-
+        
+        # 网络服务重启
+        echo "重启网络服务..."
+        sudo systemctl restart systemd-networkd
+        sudo systemctl restart systemd-resolved
+        sleep 5
+        echo "当前DNS配置:"
+        systemd-resolve --status
+        ping -c 4 github.com
     
     - name: 下载"${{ matrix.target }}-${{ inputs.REPO_BRANCH }}"源码
       working-directory: /${{ env.DIY_WORK }}
