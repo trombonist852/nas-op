@@ -125,6 +125,9 @@ jobs:
         sudo chown $USER:$GROUPS /${{ env.DIY_WORK }}
         echo "扩展空间完成:"
         df -h /${{ env.DIY_WORK }}
+        echo "设置DNS配置..."
+        echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf
+        echo "nameserver 1.1.1.1" | sudo tee -a /etc/resolv.conf        
 
     
     - name: 下载"${{ matrix.target }}-${{ inputs.REPO_BRANCH }}"源码
