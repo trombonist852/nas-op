@@ -57,8 +57,6 @@ jobs:
       run: |
         sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
         sudo timedatectl set-timezone "$TZ"
-        sudo mkdir -p /${{ env.DIY_WORK }}
-        sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}
 
     - name: Create simulated physical disk
       run: |
