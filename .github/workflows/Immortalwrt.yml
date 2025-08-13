@@ -103,6 +103,20 @@ jobs:
         # 请勿对 target: [Immortalwrt] 做任何修改
         
     steps:
+    - name: Create simulated physical disk
+      run: |
+        mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 1)
+        root_size=$(expr $(df -h / | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 4)
+        sudo truncate -s "${mnt_size}"G /mnt/mnt.img
+        sudo truncate -s "${root_size}"G /root.img
+        sudo losetup /dev/loop6 /mnt/mnt.img
+        sudo losetup /dev/loop7 /root.img
+        sudo pvcreate /dev/loop6
+        sudo pvcreate /dev/loop7
+        sudo vgcreate github /dev/loop6 /dev/loop7
+        sudo lvcreate -n runner -l 100%FREE github
+        sudo mkfs.xfs /dev/github/runner    
+    
     - name: 准备结束
       uses: actions/checkout@v4
       
@@ -116,15 +130,8 @@ jobs:
         sudo -E apt-get -qq update -y
         sudo -E apt-get -qq install -y gawk git gettext libssl-dev xsltproc zip git-core wget curl grep python2.7 python3 python3-pip libpython3-dev
         sudo timedatectl set-timezone "$TZ"
-
-    - name: Create simulated physical disk
-      run: |              
-        # 创建基于内存的文件系统
         sudo mkdir -p /${{ env.DIY_WORK }}
-        sudo mount -t tmpfs -o size=100G tmpfs /${{ env.DIY_WORK }}
-        sudo chown $USER:$GROUPS /${{ env.DIY_WORK }}
-        echo "扩展空间完成:"
-        df -h /${{ env.DIY_WORK }}
+        sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}        
     
     - name: 下载"${{ matrix.target }}-${{ inputs.REPO_BRANCH }}"源码
       working-directory: /${{ env.DIY_WORK }}
