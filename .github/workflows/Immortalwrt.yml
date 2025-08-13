@@ -129,13 +129,7 @@ jobs:
     
     - name: 下载"${{ matrix.target }}-${{ inputs.REPO_BRANCH }}"源码
       working-directory: /${{ env.DIY_WORK }}
-      run: |
-        # 添加详细诊断信息
-        echo "当前DNS配置:"
-        cat /etc/resolv.conf
-        echo "解析测试:"
-        nslookup github.com
-              
+      run: |              
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
         ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
