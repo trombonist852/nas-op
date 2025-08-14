@@ -18,6 +18,7 @@ env:
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TZ: Asia/Shanghai
+  DIY_WORK: diy_work
 
 jobs:
   build:
@@ -27,6 +28,7 @@ jobs:
     
     env:
       FOLDER_NAME: ${{ matrix.target }}
+      WORKSPACE_PATH: ${{ github.workspace }}
     strategy:
       fail-fast: false
       matrix:
@@ -62,10 +64,17 @@ jobs:
         df -h      
         sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
         sudo timedatectl set-timezone "$TZ"
-        mkdir -p /home/runner/work/nas-op/nas-op/${{ env.DIY_WORK }}
+        echo "创建工作目录: ${WORKSPACE_PATH}/${DIY_WORK}"
+        mkdir -p "${WORKSPACE_PATH}/${DIY_WORK}"
+        sudo chown -R $USER: "$GITHUB_WORKSPACE"
+        
+        # 验证权限
+        echo "目录权限:"
+        ls -ld "${WORKSPACE_PATH}/${DIY_WORK}"
+        echo "当前用户: $(whoami)"
 
     - name: 下载"${{matrix.target}}"源码
-      working-directory: /${{ env.DIY_WORK }}
+      working-directory: ${{ env.WORKSPACE_PATH }}/${{ env.DIY_WORK }}
       run: |
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
         ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
