@@ -69,6 +69,7 @@ jobs:
         echo "Free space:"
         df -h         
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
+        ln -sf ${{ github.workspace }}/${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
     
     - name: 公告
