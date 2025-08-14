@@ -18,6 +18,7 @@ env:
   TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
   TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
   TZ: Asia/Shanghai
+  DIY_WORK: /mnt/diy_work
 
 jobs:
   build:
@@ -46,6 +47,15 @@ jobs:
       run: |   
         sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
         sudo timedatectl set-timezone "$TZ"
+        
+    - name: 准备持久化工作区
+      run: |
+        # 在/mnt下创建不会被清理的目录
+        sudo mkdir -p ${{ env.DIY_WORK }}
+        sudo chown -R ${USER}:${GROUPS} ${{ env.DIY_WORK }}
+        sudo chmod -R 755 ${{ env.DIY_WORK }}
+        echo "DIY_WORK=${{ env.DIY_WORK }}" >> $GITHUB_ENV
+        
 
     - name: Maximize build space
       uses: easimon/maximize-build-space@master
@@ -54,7 +64,7 @@ jobs:
         swap-size-mb: 4096
         remove-dotnet: 'true'
         overprovision-lvm: 'true'
-        build-mount-path: ''
+        build-mount-path: '/mnt'
         pv-loop-path: '/pv.img'
         tmp-pv-loop-path: '/mnt/tmp-pv.img'
         remove-android: 'true'
@@ -62,22 +72,23 @@ jobs:
         remove-codeql: 'true'
         remove-docker-images: 'true'
 
-    - name: 准备结束
-      uses: actions/checkout@v4
-
-    - name: 准备编译  
+    - name: 验证工作区权限
       run: |
-        sudo mkdir -p /${{ env.DIY_WORK }}
-        sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}        
-        
+        echo "工作区路径: ${{ env.DIY_WORK }}"
+        ls -ld ${{ env.DIY_WORK }}
+        touch ${{ env.DIY_WORK }}/testfile
+        echo "权限验证成功"        
+
+    - name: 准备结束
+      uses: actions/checkout@v4        
 
     - name: 下载"${{matrix.target}}"源码
-      working-directory: /${{ env.DIY_WORK }}
+      working-directory: ${{ env.DIY_WORK }}
       run: |
         echo "Free space:"
         df -h         
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
-        ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
+        ln -sf ${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
     
     - name: 公告
