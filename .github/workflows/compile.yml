@@ -64,12 +64,11 @@ jobs:
         sudo chown -R $USER: "$GITHUB_WORKSPACE"
 
     - name: 下载"${{matrix.target}}"源码
-      working-directory: /${{ env.DIY_WORK }}
+      working-directory: ${{ github.workspace }}/${{ env.DIY_WORK }}
       run: |
         echo "Free space:"
         df -h         
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
-        ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
     
     - name: 公告
