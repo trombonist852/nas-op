@@ -60,8 +60,8 @@ jobs:
       run: |   
         sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
         sudo timedatectl set-timezone "$TZ"
-        sudo mkdir -p "/openwrt/${{ env.DIY_WORK }}"
-        sudo chown -R $USER: ${{ env.DIY_WORK }}
+        sudo mkdir -p /openwrt/${{ env.DIY_WORK }}
+        sudo chown -R $USER: /${{ env.DIY_WORK }}
 
     - name: 下载"${{matrix.target}}"源码
       working-directory: /${{ env.DIY_WORK }}
