@@ -54,16 +54,21 @@ jobs:
         swap-size-mb: 4096
         remove-dotnet: 'true'
         overprovision-lvm: 'true'
-        build-mount-path: '/openwrt'
+        build-mount-path: ''
         pv-loop-path: '/pv.img'
         tmp-pv-loop-path: '/mnt/tmp-pv.img'
         remove-android: 'true'
         remove-haskell: 'true'
         remove-codeql: 'true'
-        remove-docker-images: 'true'  
-        run: |
-          sudo mkdir -p /${{ env.DIY_WORK }}
-          sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}        
+        remove-docker-images: 'true'
+
+    - name: 准备结束
+      uses: actions/checkout@v4
+
+    - name: 准备编译  
+      run: |
+        sudo mkdir -p /${{ env.DIY_WORK }}
+        sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}        
         
 
     - name: 下载"${{matrix.target}}"源码
