@@ -40,7 +40,7 @@ jobs:
         swap-size-mb: 4096
         remove-dotnet: 'true'
         overprovision-lvm: 'true'
-        build-mount-path: 'true'
+        build-mount-path: ''
         pv-loop-path: '/pv.img'
         tmp-pv-loop-path: '/mnt/tmp-pv.img'
         remove-android: 'true'
