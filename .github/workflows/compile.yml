@@ -57,9 +57,7 @@ jobs:
     - name: 部署编译环境
       env:
         DEBIAN_FRONTEND: noninteractive
-      run: |
-        echo "Free space:"
-        df -h      
+      run: |   
         sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
         sudo timedatectl set-timezone "$TZ"
         mkdir -p "${{ github.workspace }}/${{ env.DIY_WORK }}"
@@ -68,6 +66,8 @@ jobs:
     - name: 下载"${{matrix.target}}"源码
       working-directory: /${{ env.DIY_WORK }}
       run: |
+        echo "Free space:"
+        df -h         
         git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
         ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
