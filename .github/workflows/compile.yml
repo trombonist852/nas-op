@@ -73,17 +73,18 @@ jobs:
         sudo vgcreate github /dev/loop6 /dev/loop7
         sudo lvcreate -n runner -l 100%FREE github
         sudo mkfs.xfs /dev/github/runner
-        sudo mkdir -p /${{ env.DIY_WORK }}
-        sudo mount /dev/github/runner /${{ env.DIY_WORK }}
-        sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}        
+        sudo mkdir -p /github-builder
+        sudo mount /dev/github/runner /github-builder
+        sudo chown -R $USER:$GROUPS /github-builder       
         df -Th         
 
 
     - name: 下载"${{matrix.target}}"源码
-      working-directory: /${{ env.DIY_WORK }}
+      working-directory: /github-builder
       run: |
-        git clone -q -b "${REPO_BRANCH}" --single-branch "${REPO_URL}" openwrt
-        ln -sf /${{ env.DIY_WORK }}/openwrt ${GITHUB_WORKSPACE}/openwrt
+        df -hT $PWD
+        git clone -b $REPO_BRANCH --single-branch $REPO_URL openwrt
+        ln -sf /github-builder/openwrt $GITHUB_WORKSPACE/openwrt
         bash ${{ env.COMMON_SH }} Diy_feedsconf
     
     - name: 公告
