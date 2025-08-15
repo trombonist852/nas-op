@@ -33,31 +33,6 @@ jobs:
        target: [Immortalwrt]
 
     steps:
-    - name: 释放Ubuntu磁盘空间
-      uses: danshui-git/free-disk-space@main
-      with:
-        remove_android: true
-        remove_dotnet: true
-        remove_haskell: true
-        remove_tool_cache: true
-        remove_swap: true
-        remove_docker_image: true
-        remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
-        remove_folders: "/usr/share/swift /usr/share/miniconda /usr/share/az* /usr/share/glade* /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell"
-        
-    - name: 准备结束
-      uses: actions/checkout@v4
-
-    - name: 检测密匙/文件/版本
-      uses: 281677160/common@mishi
-        
-    - name: 部署编译环境
-      env:
-        DEBIAN_FRONTEND: noninteractive
-      run: |
-        sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
-        sudo timedatectl set-timezone "$TZ"
-
     - name: Create simulated physical disk
       run: |
         mnt_size=$(expr $(df -h /mnt | tail -1 | awk '{print $4}' | sed 's/[[:alpha:]]//g' | sed 's/\..*//') - 1)
@@ -71,13 +46,23 @@ jobs:
         sudo vgcreate github /dev/loop6 /dev/loop7
         sudo lvcreate -n runner -l 100%FREE github
         sudo mkfs.xfs /dev/github/runner
+        df -Th 
+        
+    - name: 准备结束
+      uses: actions/checkout@v4
+
+    - name: 检测密匙/文件/版本
+      uses: 281677160/common@mishi
+        
+    - name: 部署编译环境
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        sudo bash -c 'bash <(curl -fsSL https://github.com/281677160/common/raw/main/custom/ubuntu.sh)'
+        sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /${{ env.DIY_WORK }}
         sudo mount /dev/github/runner /${{ env.DIY_WORK }}
         sudo chown ${USER}:${GROUPS} /${{ env.DIY_WORK }}
-        df -Th        
-    
-    - name: 准备结束
-      uses: actions/checkout@v4
 
 
     - name: 下载"${{matrix.target}}"源码
