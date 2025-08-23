@@ -58,11 +58,8 @@ export Disable_53_redirection="1"            # 删除DNS强制重定向53端口�
 export Cancel_running="1"                    # 取消路由器每天跑分任务(个别源码本身不带此功能)(1为启用命令,填0为不作修改)
 sed -i 's#/bin/ash#/bin/bash#g' package/base-files/files/etc/passwd
 sed -i 's#root::0:0:99999:7:::#root:$1$fe9OTETj$lEJwiQW4hDxi/GNj4JUlC1:18679:0:99999:7:::#g' package/base-files/files/etc/shadow
-git clone https://github.com/xiaozhuai/luci-app-filebrowser.git package/custom/luci-app-filebrowser-mod
+##git clone https://github.com/xiaozhuai/luci-app-filebrowser.git package/custom/luci-app-filebrowser-mod
 echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> "feeds.conf.default"
-rm -rf feeds/packages/utils/dockerd
-git clone https://github.com/trombonist852/custom.git
-mv custom/dockerd feeds/packages/utils/dockerd
 
 
 # 晶晨CPU系列打包固件设置(不懂请看说明)
