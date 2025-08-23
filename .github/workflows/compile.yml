@@ -118,6 +118,9 @@ jobs:
       if: steps.package.outcome == 'success'
       run: |
         cd openwrt
+        rm -rf feeds/packages/utils/dockerd
+        git clone https://github.com/trombonist852/custom.git
+        mv custom/dockerd feeds/packages/utils/dockerd
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 V=s
 
