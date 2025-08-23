@@ -120,6 +120,7 @@ jobs:
         cd openwrt
         rm -rf feeds/packages/utils/dockerd
         git clone https://github.com/trombonist852/custom.git
+        chmod +x custom/dockerd/git-short-commit.sh
         mv custom/dockerd feeds/packages/utils/dockerd
         echo -e "$(nproc) thread compile"
         make -j$(nproc) || make -j1 V=s
