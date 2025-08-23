@@ -60,6 +60,9 @@ sed -i 's#/bin/ash#/bin/bash#g' package/base-files/files/etc/passwd
 sed -i 's#root::0:0:99999:7:::#root:$1$fe9OTETj$lEJwiQW4hDxi/GNj4JUlC1:18679:0:99999:7:::#g' package/base-files/files/etc/shadow
 git clone https://github.com/xiaozhuai/luci-app-filebrowser.git package/custom/luci-app-filebrowser-mod
 echo "src-git nikki https://github.com/nikkinikki-org/OpenWrt-nikki.git;main" >> "feeds.conf.default"
+rm -rf feeds/packages/utils/dockerd
+git clone https://github.com/trombonist852/custom.git
+mv custom/dockerd feeds/packages/utils/dockerd
 
 
 # 晶晨CPU系列打包固件设置(不懂请看说明)
